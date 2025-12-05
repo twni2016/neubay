@@ -1,0 +1,6 @@
+# @package _global_
+dataset_name: Walker2d-v3-medium
+train:
+  critic_enc_lr: 3e-7
+  actor_enc_lr: 3e-7
+  real_weight: 0.8

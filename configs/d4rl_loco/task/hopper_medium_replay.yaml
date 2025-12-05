@@ -1,0 +1,8 @@
+# @package _global_
+dataset_name: hopper-medium-replay-v2
+train:
+  critic_enc_lr: 3e-7
+  actor_enc_lr: 3e-7
+  real_weight: 0.5
+model:
+  target_alpha_ratio: null

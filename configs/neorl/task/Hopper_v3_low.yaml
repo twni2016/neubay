@@ -1,0 +1,8 @@
+# @package _global_
+dataset_name: Hopper-v3-low
+train:
+  critic_enc_lr: 3e-6
+  actor_enc_lr: 3e-6
+  real_weight: 0.8
+model:
+  target_alpha_ratio: null

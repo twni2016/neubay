@@ -1,0 +1,8 @@
+# @package _global_
+dataset_name: hopper-random-v2
+train:
+  critic_enc_lr: 1e-5
+  actor_enc_lr: 1e-5
+  real_weight: 0.5
+model:
+  target_alpha_ratio: null

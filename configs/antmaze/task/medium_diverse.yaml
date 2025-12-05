@@ -1,0 +1,6 @@
+# @package _global_
+dataset_name: antmaze-medium-diverse-v2
+train:
+  critic_enc_lr: 1e-6
+  actor_enc_lr: 1e-6
+  real_weight: 0.95

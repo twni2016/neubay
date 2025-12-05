@@ -1,0 +1,53 @@
+defaults:
+  - _self_
+  - override /hydra/hydra_logging@_group_: none
+  - override /hydra/job_logging@_group_: none
+
+# Common settings
+debug: False
+seed: 0
+
+eval:
+  times: 100 # total times for evaluation
+  real_episodes: 20 # real envs
+  rollout_episodes: 100 # training envs
+
+collect: # online rollouts using the world model
+  data_path: offline_world/data/bandit.pkl
+  save_dir: offline_world/ckpt/bandit
+  ensemble_size: 100
+  parallel_size: 100 # try to fix, a sweet spot for parallelism is 10_000
+  penalty_coef: 0.0
+  unc_type: epi_mean
+  eps_start: 1.0
+  eps_end: 0.1
+  eps_end_ratio: 0.1
+
+train:
+  grad_steps: 20_000 # try to fix
+  batch_size: 1_000 # try to fix
+  buffer_size: 1_000_000 # try to fix
+  utd: 0.02 # try to fix
+  enc_lr: 3e-6 # to tune
+  head_lr: 1e-4 # try to fix
+  lr_ratio: 1.0 # try to fix, cosine decay
+  weight_decay: 0.0 # try to fix
+  gamma: 0.99
+  target_tau: 0.005
+  adam_eps: 1.0e-8
+  gradient_scale: 1.0
+
+model:
+  memory: # LRU
+    d_model: 256
+    d_hidden: 128
+    n_layers: 2
+    r_min: 0.0
+    r_max: 0.9 # this affects stability
+  head_d_hidden: 256
+  head_n_layers: 2
+
+hydra:
+  output_subdir: null
+  run:
+    dir: .

@@ -1,0 +1,73 @@
+defaults:
+  - _self_
+  - task: placeholder
+  - override /hydra/hydra_logging@_group_: none
+  - override /hydra/job_logging@_group_: none
+
+# Common settings
+domain: neorl
+dataset_name: HalfCheetah-v3-low
+seed: 0
+debug: False
+save_agent: False
+save_agent_root: null
+load_agent_path: null
+
+## only used in ensemble training
+ensemble:
+  domain: ensemble_neorl
+  save_dir: offline_world/ckpt/neorl
+  plot_dir: plt/neorl
+  total_size: 128 # >= ensemble_size
+  hidden_size: 200
+  has_ln: True
+  total_epochs: null
+  max_epochs_since_update: 5
+  improve_thres: 0.01
+  batch_size: 256
+  lr: 0.001
+  weight_decay: 0.00005
+
+## below are only used in agent training settings
+eval:
+  times: 100 # total times for evaluation
+  real_episodes: 20 # real envs
+
+collect:
+  ensemble_size: 100
+  parallel_size: 100
+  penalty_coef: 0.0 # to ablate
+  unc_type: epi_mean
+  unc_quantile: 1.0 # try to fix, in [0,1], while negative means thres is inf
+  max_rollout_len: -1 # -1 means not using max rollout length
+
+train:
+  grad_steps: 2_000_000 # try to fix, MOBILE 3M, LEQ 1M
+  batch_size: 2_048 # try to fix
+  buffer_size: 40_000_000 # try to fix
+  utd: 0.05 # try to fix
+  real_weight: 0.05 # to tune
+  critic_lr: 1e-4
+  actor_lr: 1e-4
+  critic_lr_ratio: 1.0 # try to fix, cosine decay
+  actor_lr_ratio: 0.0 # try to fix, cosine decay
+  alpha_lr: 1e-4
+  weight_decay: 0.0 # try to fix
+  gamma: 0.99
+  target_tau: 0.005
+  adam_eps: 1.0e-8
+  gradient_scale: 1000.0 # try to fix
+
+model:
+  # Markov MLP
+  d_hidden: 256
+  n_layers: 2
+  num_critics: 10 # sac uses 2, redq uses 10
+  sampled_critics: 2 # sac and redq use 2
+  target_alpha_ratio: 1.0 # times -|A|, fixed alpha if None
+  init_alpha: 0.2
+
+hydra:
+  output_subdir: null
+  run:
+    dir: .

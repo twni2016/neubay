@@ -1,0 +1,6 @@
+# @package _global_
+dataset_name: halfcheetah-medium-replay-v2
+train:
+  critic_enc_lr: 1e-5
+  actor_enc_lr: 1e-5
+  real_weight: 0.05

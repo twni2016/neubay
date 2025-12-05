@@ -1,0 +1,81 @@
+defaults:
+  - _self_
+  - task: placeholder
+  - override /hydra/hydra_logging@_group_: none
+  - override /hydra/job_logging@_group_: none
+
+# Common settings
+domain: antmaze
+dataset_name: antmaze-umaze-v2
+seed: 0
+debug: False
+save_agent: False
+save_agent_root: null
+load_agent_path: null
+
+## only used in ensemble training
+ensemble:
+  domain: ensemble_antmaze
+  save_dir: offline_world/ckpt/antmaze
+  plot_dir: plt/antmaze
+  total_size: 128  # >= ensemble_size
+  hidden_size: 200
+  has_ln: True
+  total_epochs: null
+  max_epochs_since_update: 5
+  improve_thres: 0.01
+  batch_size: 256
+  lr: 0.001
+  weight_decay: 0.00005
+
+## below are only used in agent training settings
+eval:
+  times: 100  # total times for evaluation
+  real_episodes: 100  # real envs, increased for antmaze
+
+collect:
+  ensemble_size: 100
+  parallel_size: 100
+  penalty_coef: 0.0
+  unc_type: epi_mean
+  unc_quantile: 1.0
+  max_rollout_len: -1
+
+train:
+  grad_steps: 3_000_000
+  batch_size: 2_048
+  buffer_size: 60_000_000
+  utd: 0.05
+  real_weight: 0.95
+  critic_enc_lr: 1e-5 # to tune
+  critic_head_lr: 1e-4
+  actor_enc_lr: 1e-5 # to tune
+  actor_head_lr: 1e-4
+  critic_lr_ratio: 1.0 # try to fix, cosine decay
+  actor_lr_ratio: 0.0 # try to fix, cosine decay
+  alpha_lr: 1e-4
+  weight_decay: 0.0 # try to fix
+  gamma: 0.99
+  target_tau: 0.005
+  adam_eps: 1.0e-8
+  gradient_scale: 1.0 # try to fix
+  backup_entropy: True
+
+model:
+  memory:
+    d_model: 256
+    d_hidden: 128
+    n_layers: 2
+    r_min: 0.0
+    r_max: 0.9
+  head_d_hidden: 256
+  head_n_layers: 2
+  num_critics: 10 # sac uses 2, redq uses 10
+  sampled_critics: 2 # sac and redq use 2
+  target_alpha_ratio: 10.0 # times -|A|, fixed alpha if None
+  init_alpha: 0.00001
+
+hydra:
+  output_subdir: null
+  run:
+    dir: .

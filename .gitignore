@@ -1,0 +1,12 @@
+*.pyc
+*__pycache__/
+*wandb/
+*.out
+slurm/
+offline_world/ckpt/
+plt/
+plots/
+logs/
+
+# soft link
+offline_world/ckpt
