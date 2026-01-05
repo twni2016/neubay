@@ -7,43 +7,53 @@ Official code for "Long-Horizon Model-Based Offline Reinforcement Learning Witho
 
 Authors: [Tianwei Ni](https://twni2016.github.io/), [Esther Derman](https://scholar.google.com/citations?user=IBIXZCAAAAAJ&hl=fr), [Vineet Jain](https://vineetjain96.github.io/), [Vincent Taboga](https://tabogavincent.com/), [Siamak Ravanbakhsh](https://siamak.page/), [Pierre-Luc Bacon](https://pierrelucbacon.com/).
 
-## NEUBAY: a first step toward scalable, non-conservative, Bayesian RL
+## NEUBAY: Toward scalable, non-conservative, Bayesian RL
 
-Most offline RL methods rely on conservatism, either by penalizing out-of-dataset actions or by restricting planning horizons. However, we show that **conservatism hurts generalization** with a bandit example (penalty coef > 0):
+Most offline RL methods rely on *conservatism*, either by penalizing out-of-dataset actions or by restricting planning horizons. While effective for stability, we show that **conservatism fundamentally hurts generalization**. 
+
+### Conservative vs Bayesian principle
+
+Using a bandit example, we show that mild uncertainty penalties prevent adaptation and lead to suboptimal decisions:
 
 <p align="center">
   <img src="assets/bandit.png" width="75%">
 </p>
 
-Instead, we revisit the Bayesian principle. A **non-conservative Bayesian** agent (penalty = 0) enables **test-time generalization by adaptation**:
+In contrast, a **non-conservative Bayesian** agent (penalty = 0) enables **test-time generalization by adaptation**:
 - generalizes to better but unseen arm, or
-- re-commits to better and seen arm after exploration. 
+- re-commits to better and seen arm after exploratory interaction.
 
 This corresponds to solving the "epistemic POMDP" [(Ghosh et al., 2022)](https://arxiv.org/abs/2207.02200): construct a POMDP from the offline dataset and train a history-dependent agent on it. Conceptually simple and Bayes-optimal.
 
-It has been challenging to make Bayesian agent practical, as it involves (1) world modeling (2) long-horizon planning (3) recurrent RL. Here, we highlight two key design choices:
+### Why long horizons matter in Bayesian agents
 
-(1) **Layer normalization in the world model** can significantly reduce compounding errors: 
-
-<p align="center">
-  <img src="assets/compound_error.png" width="75%">
-</p>
-
-(2) **Adaptive long-horizon planning** can significantly reduce value overestimation, *without introducing conservatism*:
+When scaling Bayesian agents to MDPs, removing conservatism exposes value overestimation. We find that **long-horizon model rollouts** are essential to counteract this effect.
 
 <p align="center">
   <img src="assets/q_and_horizon.png" width="75%">
 </p>
 
+### Making long horizons work
 
-It succeeds with planning horizons of *several hundred steps*, challenging common wisdom. These yield our practical algorithm, NEUBAY, grounded in the *neu*tral *Bay*esian principle:
+Long horizons introduce compounding model errors. Two simple design choices make them practical:
+- **Layer normalization** in the world model  
+- Uncertainty-based **adaptive rollout truncation**
+
+Together, they substantially reduce error accumulation:
+
+<p align="center">
+  <img src="assets/compound_error.png" width="75%">
+</p>
+
+### Our algorithm NEUBAY
+
+Combining these insights with other design choices like small context learning rates yields **NEUBAY**, a practical algorithm grounded in the **neu**tral **Bay**esian principle. 
+
+On D4RL and NeoRL benchmarks, NEUBAY performs competitively with state-of-the-art conservative baselines, while avoiding pessimism entirely. NEUBAY plans over several hundred steps, challenging the dominant short-horizon practice. 
 
 <p align="center">
   <img src="assets/algorithm.png" width="60%">
 </p>
-
-On D4RL and NeoRL benchmarks, NEUBAY performs competitively with state-of-the-art conservative baselines, while avoiding pessimism entirely. We view this as a first step toward **scalable, non-conservative, Bayesian** offline RL.
-
 
 
 ## Setup
